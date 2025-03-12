@@ -9,7 +9,7 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.checkout</groupId>
-	<artifactId>demo</artifactId>
+	<artifactId>stripe-integration</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>stripe-integration-backend</name>
 	<description>Stripe Integration</description>
