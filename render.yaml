@@ -1,0 +1,6 @@
+services:
+  - type: web
+    name: stripe-integration-backend
+    env: java
+    buildCommand: mvn clean install
+    startCommand: java -Dserver.port=$PORT -jar target/stripe-integration-0.0.1-SNAPSHOT.jar
