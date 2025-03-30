@@ -65,8 +65,12 @@ public class StripeService {
                     .setUnitAmount(5800L)
                     .setCurrency("usd")
                     .setProduct(product.getId())
+                    .setRecurring(PriceCreateParams.Recurring.builder()
+                            .setInterval(PriceCreateParams.Recurring.Interval.YEAR)
+                            .build())
                     .build();
             price = Price.create(priceParams);
+
         }
 
         SessionCreateParams sessionParams = SessionCreateParams.builder()
@@ -76,7 +80,7 @@ public class StripeService {
                                 .setPrice(price.getId())
                                 .setQuantity(1L)
                                 .build())
-                .setMode(SessionCreateParams.Mode.PAYMENT)
+                .setMode(SessionCreateParams.Mode.SUBSCRIPTION)  // Use subscription mode
                 .setSuccessUrl(successUrl)
                 .setCancelUrl(cancelUrl)
                 .build();
