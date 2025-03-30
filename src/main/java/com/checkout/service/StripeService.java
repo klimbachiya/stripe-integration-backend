@@ -8,6 +8,7 @@ import com.stripe.model.checkout.Session;
 import com.stripe.param.PriceCreateParams;
 import com.stripe.param.ProductCreateParams;
 import com.stripe.param.checkout.SessionCreateParams;
+import com.stripe.param.PriceListParams;
 import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -29,7 +30,7 @@ public class StripeService {
 
     public String createCheckoutSession(String successUrl, String cancelUrl) throws StripeException {
 
-        String existingProductId = "prod_RuZ3LXaml1m4Du";  // Replace with your logic to fetch existing product ID from DB or configuration
+        String existingProductId = "prod_S2VNM4pxTff7tg";  // Replace with your logic to fetch existing product ID from DB or configuration
 
         Product product;
 
@@ -39,20 +40,34 @@ public class StripeService {
         } catch (StripeException e) {
             // If product doesn't exist, create a new one
             ProductCreateParams productParams = ProductCreateParams.builder()
-                    .setName("Annual Plan")  // Name of the product
-                    .setDescription("Annual Plan")  // Product description
+                    .setName("MediCare Pro - Annual Plan\n")  // Name of the product
+                    .setDescription("Get **24/7 doctor consultations, AI-powered health reports, and priority medical assistance** for a full year.")  // Product description
                     .build();
 
             product = Product.create(productParams);
         }
 
-        PriceCreateParams priceParams = PriceCreateParams.builder()
-                .setUnitAmount(5800L)
-                .setCurrency("usd")
-                .setProduct(product.getId())
+        // Fetch existing prices for the product
+        PriceListParams priceListParams = PriceListParams.builder()
+                .setProduct(existingProductId)
                 .build();
 
-        Price price = Price.create(priceParams);
+        List<Price> prices = Price.list(priceListParams).getData();
+
+        Price price;
+
+        if (!prices.isEmpty()) {
+            // Reuse the existing price
+            price = prices.get(0);
+        } else {
+            // Create a new price if no existing price is found
+            PriceCreateParams priceParams = PriceCreateParams.builder()
+                    .setUnitAmount(5800L)
+                    .setCurrency("usd")
+                    .setProduct(product.getId())
+                    .build();
+            price = Price.create(priceParams);
+        }
 
         SessionCreateParams sessionParams = SessionCreateParams.builder()
                 .addPaymentMethodType(SessionCreateParams.PaymentMethodType.CARD)
